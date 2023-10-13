@@ -23,7 +23,7 @@ def collate_fn(dataset_items: List[dict]):
 
     return {
         "text": text,
-        "audio": audio,
+        "audio": item["audio"],
         "audio_path": audio_path,
         "spectrogram_length": torch.tensor(spectrogram_length),
         "text_encoded_length": torch.tensor(text_encoded_length),
