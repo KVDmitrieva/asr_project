@@ -215,22 +215,23 @@ class Trainer(BaseTrainer):
         if self.writer is None:
             return
 
-        example_inds = sample(range(len(text)), examples_to_log)
+        tuple = list(zip(text, log_probs, log_probs_length, audio_path))
+        shuffle(tuple)
+        text, log_probs, log_probs_length, audio_path = tuple[:examples_to_log]
 
-        argmax_inds = log_probs[example_inds].cpu().argmax(-1).numpy()
+        argmax_inds = log_probs.cpu().argmax(-1).numpy()
         argmax_inds = [
             inds[: int(ind_len)]
-            for inds, ind_len in zip(argmax_inds, log_probs_length[example_inds].numpy())
+            for inds, ind_len in zip(argmax_inds, log_probs_length.numpy())
         ]
         argmax_texts_raw = [self.text_encoder.decode(inds) for inds in argmax_inds]
         argmax_texts = [self.text_encoder.ctc_decode(inds) for inds in argmax_inds]
 
-        beam_search_texts = []
-        for i in example_inds:
-            beam_search_texts.append(self.text_encoder.ctc_beam_search(log_probs[i], log_probs_length[i], self.beam_size)[0].text)
+        beam_texts = []
+        for log_prob, log_prob_length in zip(log_probs, log_probs_length):
+            beam_texts.append(self.text_encoder.ctc_beam_search(log_prob, log_prob_length, self.beam_size)[0].text)
 
-        tuples = list(zip(argmax_texts, beam_search_texts, text[example_inds], argmax_texts_raw, audio_path[example_inds]))
-
+        tuples = list(zip(argmax_texts, beam_texts, text, argmax_texts_raw, audio_path))
         rows = {}
         for pred, beam_pred, target, raw_pred, audio_path in tuples:
             target = BaseTextEncoder.normalize_text(target)

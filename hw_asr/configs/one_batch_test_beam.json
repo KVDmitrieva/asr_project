@@ -1,5 +1,5 @@
 {
-  "name": "one_batch_test",
+  "name": "one_batch_test_beam",
   "n_gpu": 1,
   "preprocessing": {
     "sr": 16000,
