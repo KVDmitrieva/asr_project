@@ -218,7 +218,7 @@ class Trainer(BaseTrainer):
         tuple = list(zip(text, log_probs, log_probs_length, audio_path))
         shuffle(tuple)
         rows = {}
-        for target, log_prob, log_prob_length, audio in tuple[:examples_to_log]:
+        for target, log_prob, log_prob_length, one_audio_path in tuple[:examples_to_log]:
             target = BaseTextEncoder.normalize_text(target)
 
             argmax_inds = log_prob[:int(log_prob_length)].cpu().argmax(-1).numpy()
@@ -231,7 +231,7 @@ class Trainer(BaseTrainer):
             beam_wer = calc_wer(target, beam_pred) * 100
             beam_cer = calc_cer(target, beam_pred) * 100
 
-            rows[Path(audio_path).name] = {
+            rows[Path(one_audio_path).name] = {
                 "target": target,
                 "raw prediction": argmax_text_raw,
                 "argmax predictions": argmax_text,
