@@ -1,6 +1,6 @@
 import random
 from pathlib import Path
-from random import shuffle
+from random import shuffle, sample
 
 import PIL
 import pandas as pd
@@ -34,6 +34,7 @@ class Trainer(BaseTrainer):
             text_encoder,
             lr_scheduler=None,
             len_epoch=None,
+            beam_size=None,
             skip_oom=True,
     ):
         super().__init__(model, criterion, metrics, optimizer, lr_scheduler, config, device)
@@ -51,6 +52,7 @@ class Trainer(BaseTrainer):
         self.evaluation_dataloaders = {k: v for k, v in dataloaders.items() if k != "train"}
         self.lr_scheduler = lr_scheduler
         self.log_step = 50
+        self.beam_size = beam_size if beam_size is not None else 3
 
         self.train_metrics = MetricTracker(
             "loss", "grad norm", *[m.name for m in self.metrics], writer=self.writer
@@ -141,6 +143,7 @@ class Trainer(BaseTrainer):
         else:
             batch["logits"] = outputs
 
+        batch["beam_size"] = self.beam_size
         batch["log_probs"] = F.log_softmax(batch["logits"], dim=-1)
         batch["log_probs_length"] = self.model.transform_input_lengths(
             batch["spectrogram_length"]
@@ -208,30 +211,43 @@ class Trainer(BaseTrainer):
             *args,
             **kwargs,
     ):
-        # TODO: implement logging of beam search results
+
         if self.writer is None:
             return
-        argmax_inds = log_probs.cpu().argmax(-1).numpy()
+
+        example_inds = sample(range(len(text)), examples_to_log)
+
+        argmax_inds = log_probs[example_inds].cpu().argmax(-1).numpy()
         argmax_inds = [
             inds[: int(ind_len)]
-            for inds, ind_len in zip(argmax_inds, log_probs_length.numpy())
+            for inds, ind_len in zip(argmax_inds, log_probs_length[example_inds].numpy())
         ]
         argmax_texts_raw = [self.text_encoder.decode(inds) for inds in argmax_inds]
         argmax_texts = [self.text_encoder.ctc_decode(inds) for inds in argmax_inds]
-        tuples = list(zip(argmax_texts, text, argmax_texts_raw, audio_path))
-        shuffle(tuples)
+
+        beam_search_texts = []
+        for i in example_inds:
+            beam_search_texts.append(self.text_encoder.ctc_beam_search(log_probs[i], log_probs_length[i], self.beam_size)[0].text)
+
+        tuples = list(zip(argmax_texts, beam_search_texts, text[example_inds], argmax_texts_raw, audio_path[example_inds]))
+
         rows = {}
-        for pred, target, raw_pred, audio_path in tuples[:examples_to_log]:
+        for pred, beam_pred, target, raw_pred, audio_path in tuples:
             target = BaseTextEncoder.normalize_text(target)
             wer = calc_wer(target, pred) * 100
             cer = calc_cer(target, pred) * 100
+            beam_wer = calc_wer(target, beam_pred) * 100
+            beam_cer = calc_cer(target, beam_pred) * 100
 
             rows[Path(audio_path).name] = {
                 "target": target,
                 "raw prediction": raw_pred,
-                "predictions": pred,
-                "wer": wer,
-                "cer": cer,
+                "argmax predictions": pred,
+                "beam predictions": beam_pred,
+                "argmax wer": wer,
+                "argmax cer": cer,
+                "beam_wer": beam_wer,
+                "beam_cer": beam_cer,
             }
         self.writer.add_table("predictions", pd.DataFrame.from_dict(rows, orient="index"))
 
