@@ -11,16 +11,19 @@ def collate_fn(dataset_items: List[dict]):
     """
     spectrogram, text_encoded = [], []
     text, text_encoded_length = [], []
+    spectrogram_length = []
 
     for item in dataset_items:
         text.append(item["text"])
         spectrogram.append(item["spectrogram"].squeeze(0).T)
         text_encoded.append(item["text_encoded"].squeeze(0))
+        spectrogram_length.append(item["spectrogram"].shape[2])
         text_encoded_length.append(item["text_encoded"].shape[1])
 
     return {
         "text" : text,
+        "spectrogram_length": torch.tensor(spectrogram_length),
+        "text_encoded_length": torch.tensor(text_encoded_length),
         "spectrogram":  torch.nn.utils.rnn.pad_sequence(spectrogram, batch_first=True).transpose(1, 2),
-        "text_encoded" : torch.nn.utils.rnn.pad_sequence(text_encoded, batch_first=True),
-        "text_encoded_length" : torch.tensor(text_encoded_length)
+        "text_encoded" : torch.nn.utils.rnn.pad_sequence(text_encoded, batch_first=True)
     }
