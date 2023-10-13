@@ -227,19 +227,19 @@ class Trainer(BaseTrainer):
             wer = calc_wer(target, argmax_text) * 100
             cer = calc_cer(target, argmax_text) * 100
 
-            beam_pred = self.text_encoder.ctc_beam_search(log_prob, log_prob_length, self.beam_size)[0].text
-            beam_wer = calc_wer(target, beam_pred) * 100
-            beam_cer = calc_cer(target, beam_pred) * 100
+            # beam_pred = self.text_encoder.ctc_beam_search(log_prob, log_prob_length, self.beam_size)[0].text
+            # beam_wer = calc_wer(target, beam_pred) * 100
+            # beam_cer = calc_cer(target, beam_pred) * 100
 
             rows[Path(one_audio_path).name] = {
                 "target": target,
                 "raw prediction": argmax_text_raw,
                 "argmax predictions": argmax_text,
-                "beam predictions": beam_pred,
+                # "beam predictions": beam_pred,
                 "argmax wer": wer,
                 "argmax cer": cer,
-                "beam_wer": beam_wer,
-                "beam_cer": beam_cer,
+                # "beam_wer": beam_wer,
+                # "beam_cer": beam_cer,
             }
         self.writer.add_table("predictions", pd.DataFrame.from_dict(rows, orient="index"))
 
