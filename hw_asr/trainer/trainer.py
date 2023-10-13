@@ -217,33 +217,24 @@ class Trainer(BaseTrainer):
 
         tuple = list(zip(text, log_probs, log_probs_length, audio_path))
         shuffle(tuple)
-        text, log_probs, log_probs_length, audio_path = tuple[:examples_to_log]
-
-        argmax_inds = log_probs.cpu().argmax(-1).numpy()
-        argmax_inds = [
-            inds[: int(ind_len)]
-            for inds, ind_len in zip(argmax_inds, log_probs_length.numpy())
-        ]
-        argmax_texts_raw = [self.text_encoder.decode(inds) for inds in argmax_inds]
-        argmax_texts = [self.text_encoder.ctc_decode(inds) for inds in argmax_inds]
-
-        beam_texts = []
-        for log_prob, log_prob_length in zip(log_probs, log_probs_length):
-            beam_texts.append(self.text_encoder.ctc_beam_search(log_prob, log_prob_length, self.beam_size)[0].text)
-
-        tuples = list(zip(argmax_texts, beam_texts, text, argmax_texts_raw, audio_path))
         rows = {}
-        for pred, beam_pred, target, raw_pred, audio_path in tuples:
+        for target, log_prob, log_prob_length, audio in tuple[:examples_to_log]:
             target = BaseTextEncoder.normalize_text(target)
-            wer = calc_wer(target, pred) * 100
-            cer = calc_cer(target, pred) * 100
+
+            argmax_inds = log_prob[log_prob_length].cpu().argmax(-1).numpy()
+            argmax_text_raw = self.text_encoder.decode(argmax_inds)
+            argmax_text = self.text_encoder.ctc_decode(argmax_inds)
+            wer = calc_wer(target, argmax_text) * 100
+            cer = calc_cer(target, argmax_text) * 100
+
+            beam_pred = self.text_encoder.ctc_beam_search(log_prob, log_prob_length, self.beam_size)[0].text
             beam_wer = calc_wer(target, beam_pred) * 100
             beam_cer = calc_cer(target, beam_pred) * 100
 
             rows[Path(audio_path).name] = {
                 "target": target,
-                "raw prediction": raw_pred,
-                "argmax predictions": pred,
+                "raw prediction": argmax_text_raw,
+                "argmax predictions": argmax_text,
                 "beam predictions": beam_pred,
                 "argmax wer": wer,
                 "argmax cer": cer,
