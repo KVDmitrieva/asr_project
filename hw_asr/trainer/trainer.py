@@ -221,7 +221,7 @@ class Trainer(BaseTrainer):
         for target, log_prob, log_prob_length, audio in tuple[:examples_to_log]:
             target = BaseTextEncoder.normalize_text(target)
 
-            argmax_inds = log_prob[log_prob_length].cpu().argmax(-1).numpy()
+            argmax_inds = log_prob[:int(log_prob_length)].cpu().argmax(-1).numpy()
             argmax_text_raw = self.text_encoder.decode(argmax_inds)
             argmax_text = self.text_encoder.ctc_decode(argmax_inds)
             wer = calc_wer(target, argmax_text) * 100
