@@ -22,8 +22,9 @@ def collate_fn(dataset_items: List[dict]):
         text_encoded_length.append(item["text_encoded"].shape[1])
 
     return {
-        "text" : text,
-        "audio_path" : audio_path,
+        "text": text,
+        "audio": audio,
+        "audio_path": audio_path,
         "spectrogram_length": torch.tensor(spectrogram_length),
         "text_encoded_length": torch.tensor(text_encoded_length),
         "text_encoded": torch.nn.utils.rnn.pad_sequence(text_encoded, batch_first=True),
