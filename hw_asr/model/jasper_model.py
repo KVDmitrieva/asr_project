@@ -30,17 +30,19 @@ class JasperSubmodule(nn.Module):
 
 class JasperBlock(nn.Module):
     def __init__(self, submodules_num, in_channels, out_channels,
-                 kernel_size, stride=1, padding=0, dilation=1, p=0.1):
+                 kernel_size, stride=1, dilation=1, p=0.1):
         super().__init__()
         self.submodules = nn.ModuleList([
-            JasperSubmodule(in_channels if i == 0 else out_channels,
-                            out_channels, kernel_size, stride,
-                            padding, dilation, p) for i in range(submodules_num)
+            JasperSubmodule(in_channels=in_channels if i == 0 else out_channels,
+                            out_channels=out_channels, kernel_size=kernel_size,
+                            stride=stride, padding=kernel_size * dilation // 2,
+                            dilation=dilation, p=p) for i in range(submodules_num)
         ])
         self.residual = nn.Sequential(
             nn.Conv1d(in_channels, out_channels, kernel_size=1),
             nn.BatchNorm1d(out_channels)
         )
+
 
 
     def forward(self, x):
