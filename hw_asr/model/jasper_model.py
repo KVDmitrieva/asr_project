@@ -72,15 +72,13 @@ class JasperModel(BaseModel):
         )
 
     def forward(self, spectrogram, **batch):
-        batch_size, _, spec_len = spectrogram.shape
         x = self.prolog(spectrogram)
-
         for block in self.blocks:
             x = block(x)
+
         x = self.epilog(x)
-        result = torch.zeros(batch_size, x.shape[1], spec_len)
-        result[:, :, :x.shape[2]] += x
-        return {"logits": result.transpose(1, 2)}
+        x = nn.ConstantPad1d((0, spectrogram.shape[2] - x.shape[2]), 0.)(x)
+        return {"logits": x.transpose(1, 2)}
 
     def transform_input_lengths(self, input_lengths):
         return input_lengths  # we don't reduce time dimension here
