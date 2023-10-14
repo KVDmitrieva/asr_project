@@ -1,5 +1,5 @@
 {
-  "name": "one_batch_test",
+  "name": "one_batch_test_jasper",
   "n_gpu": 1,
   "preprocessing": {
     "sr": 16000,
@@ -81,8 +81,7 @@
         },
         {
           "in_channels":  1024,
-          "kernel_size":  1,
-          "p": 0.0
+          "kernel_size":  1
         }
       ]
     }
