@@ -56,7 +56,7 @@ class JasperModel(BaseModel):
                  prolog_params, blocks_params, epilog_params, **batch):
         super().__init__(n_feats, n_class, **batch)
 
-        self.prolog = JasperSubmodule(**prolog_params)
+        self.prolog = JasperSubmodule(in_channels=n_feats, **prolog_params)
 
         self.blocks = nn.ModuleList([
             JasperBlock(submodules_num=submodules_num, **blocks_params[i]) for i in range(blocks_num)
@@ -69,7 +69,7 @@ class JasperModel(BaseModel):
         )
 
     def forward(self, spectrogram, **batch):
-        x = self.prolog(spectrogram.transpose(1, 2))
+        x = self.prolog(spectrogram)
 
         for block in self.blocks:
             x = block(x)
