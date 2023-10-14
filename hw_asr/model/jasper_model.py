@@ -38,7 +38,7 @@ class JasperBlock(nn.Module):
                             padding, dilation, p) for i in range(submodules_num)
         ])
         self.residual = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=1),
+            nn.Conv1d(in_channels, out_channels, kernel_size=1),
             nn.BatchNorm1d(out_channels)
         )
 
@@ -65,7 +65,7 @@ class JasperModel(BaseModel):
         self.epilog = nn.Sequential(
             JasperSubmodule(**epilog_params[0]),
             JasperSubmodule(**epilog_params[1]),
-            nn.Conv2d(out_channels=n_class, **epilog_params[2])
+            nn.Conv1d(out_channels=n_class, **epilog_params[2])
         )
 
     def forward(self, spectrogram, **batch):
