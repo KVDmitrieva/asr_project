@@ -26,7 +26,7 @@
     "args": {
       "n_feats":  128,
       "blocks_num":  5,
-      "submodules_num": 2,
+      "submodules_num": 3,
       "prolog_params": {
         "out_channels":  256,
         "kernel_size":  11,
