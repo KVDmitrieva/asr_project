@@ -56,7 +56,7 @@ class JasperModel(BaseModel):
                  prolog_params, blocks_params, epilog_params, **batch):
         super().__init__(n_feats, n_class, **batch)
 
-        self.prolog = JasperSubmodule(in_channels=n_feats, **prolog_params)
+        self.prolog = JasperSubmodule(**prolog_params)
 
         self.blocks = nn.ModuleList([
             JasperBlock(submodules_num=submodules_num, **blocks_params[i]) for i in range(blocks_num)
