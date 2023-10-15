@@ -24,7 +24,7 @@ class CTCCharTextEncoder(CharTextEncoder):
 
         if lm_path is not None:
             self.decoder = build_ctcdecoder(
-                [ch.upper() for ch in vocab],
+                [ch.upper() for ch in self.char2ind.keys()],
                 kenlm_model_path=lm_path,
                 alpha=alpha,
                 beta=beta,
@@ -50,7 +50,7 @@ class CTCCharTextEncoder(CharTextEncoder):
         assert len(log_probs.shape) == 2
         char_length, voc_size = log_probs.shape
         assert voc_size == len(self.ind2char)
-        hypos: List[Hypothesis] = [Hypothesis('', 1.0)]
+        hypos: List[Hypothesis] = []
 
         probs = log_probs[:log_probs_length]
         beam_pred = self.decoder.decode_beams(probs, beam_width=beam_size)
