@@ -24,7 +24,7 @@ class CTCCharTextEncoder(CharTextEncoder):
 
         if lm_path is not None:
             self.decoder = build_ctcdecoder(
-                [ch.upper() for ch in self.char2ind.keys()],
+                [''] + [ch.upper() for ch in self.alphabet],
                 kenlm_model_path=lm_path,
                 alpha=alpha,
                 beta=beta,
