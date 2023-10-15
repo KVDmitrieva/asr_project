@@ -28,7 +28,6 @@
       "blocks_num":  5,
       "submodules_num": 2,
       "alpha": 0.5,
-      "beta": -110,
       "prolog_params": {
         "out_channels":  256,
         "kernel_size":  5,
