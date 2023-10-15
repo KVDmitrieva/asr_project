@@ -1,7 +1,9 @@
 from typing import List, NamedTuple
 from collections import defaultdict
+from pyctcdecode import build_ctcdecoder
 
 import torch
+import numpy as np
 
 from .char_text_encoder import CharTextEncoder
 
@@ -14,11 +16,19 @@ class Hypothesis(NamedTuple):
 class CTCCharTextEncoder(CharTextEncoder):
     EMPTY_TOK = "^"
 
-    def __init__(self, alphabet: List[str] = None):
+    def __init__(self, alphabet: List[str] = None, lm_path=None, alpha=0.5, beta=1):
         super().__init__(alphabet)
         vocab = [self.EMPTY_TOK] + list(self.alphabet)
         self.ind2char = dict(enumerate(vocab))
         self.char2ind = {v: k for k, v in self.ind2char.items()}
+
+        if lm_path is not None:
+            self.decoder = build_ctcdecoder(
+                [ch.upper() for ch in vocab],
+                kenlm_model_path=lm_path,
+                alpha=alpha,
+                beta=beta,
+            )
 
     def ctc_decode(self, inds: List[int]) -> str:
         result = []
@@ -32,6 +42,22 @@ class CTCCharTextEncoder(CharTextEncoder):
 
         return ''.join(result)
 
+    def ctc_lm_beam_search(self, log_probs: torch.tensor, log_probs_length,
+                        beam_size: int = 100) -> List[Hypothesis]:
+        """
+        Performs beam search and returns a list of pairs (hypothesis, hypothesis probability).
+        """
+        assert len(log_probs.shape) == 2
+        char_length, voc_size = log_probs.shape
+        assert voc_size == len(self.ind2char)
+        hypos: List[Hypothesis] = [Hypothesis('', 1.0)]
+
+        probs = log_probs[:log_probs_length]
+        beam_pred = self.decoder.decode_beam(probs, beam_width=beam_size)
+        for text, _, _, _, lm_log_prob in beam_pred:
+            hypos.append(Hypothesis(text, np.exp(lm_log_prob)))
+
+        return sorted(hypos, key=lambda x: x.prob, reverse=True)
 
     def ctc_beam_search(self, probs: torch.tensor, probs_length,
                         beam_size: int = 100) -> List[Hypothesis]:
