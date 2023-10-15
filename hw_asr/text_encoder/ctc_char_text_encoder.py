@@ -53,7 +53,7 @@ class CTCCharTextEncoder(CharTextEncoder):
         hypos: List[Hypothesis] = [Hypothesis('', 1.0)]
 
         probs = log_probs[:log_probs_length]
-        beam_pred = self.decoder.decode_beam(probs, beam_width=beam_size)
+        beam_pred = self.decoder.decode_beams(probs, beam_width=beam_size)
         for text, _, _, _, lm_log_prob in beam_pred:
             hypos.append(Hypothesis(text, np.exp(lm_log_prob)))
 
