@@ -28,10 +28,10 @@
       "blocks_num":  5,
       "submodules_num": 2,
       "alpha": 0.5,
-      "beta": -265,
+      "beta": -110,
       "prolog_params": {
         "out_channels":  256,
-        "kernel_size":  11,
+        "kernel_size":  5,
         "stride": 2,
         "p": 0.2
       },
@@ -39,31 +39,31 @@
         {
           "in_channels":  256,
           "out_channels":  256,
-          "kernel_size":  11,
+          "kernel_size":  5,
           "p": 0.2
         },
         {
           "in_channels":  256,
           "out_channels":  384,
-          "kernel_size":  13,
+          "kernel_size":  7,
           "p": 0.2
         },
          {
           "in_channels":  384,
           "out_channels":  512,
-          "kernel_size":  17,
+          "kernel_size":  9,
           "p": 0.2
         },
         {
           "in_channels":  512,
           "out_channels":  640,
-          "kernel_size":  21,
+          "kernel_size":  11,
           "p": 0.3
         },
         {
           "in_channels":  640,
           "out_channels":  768,
-          "kernel_size":  25,
+          "kernel_size":  13,
           "p": 0.3
         }
       ],
@@ -71,7 +71,7 @@
         {
           "in_channels":  768,
           "out_channels":  896,
-          "kernel_size":  29,
+          "kernel_size":  15,
           "dilation": 2,
           "p": 0.4
         },
