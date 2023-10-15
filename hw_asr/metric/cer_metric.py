@@ -50,7 +50,7 @@ class LMBeamSearchCERMetric(BaseMetric):
     def __call__(self, log_probs: Tensor, log_probs_length: Tensor, text: List[str], beam_size=5, **kwargs):
         cers = []
         lengths = log_probs_length.detach().numpy()
-        log_probs = log_probs.detach().numpy()
+        log_probs = log_probs.cpu().detach().numpy()
         for log_prob, length, target_text in zip(log_probs, lengths, text):
             pred_text = self.text_encoder.ctc_lm_beam_search(log_prob, length, beam_size)[0].text
             target_text = BaseTextEncoder.normalize_text(target_text)
