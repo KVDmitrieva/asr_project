@@ -55,8 +55,8 @@ class JasperBlock(nn.Module):
 
 
 class JasperModel(BaseModel):
-    def __init__(self, n_feats, n_class, blocks_num, submodules_num,
-                 prolog_params, blocks_params, epilog_params, **batch):
+    def __init__(self, n_feats, n_class, blocks_num, submodules_num, alpha,
+                 beta, prolog_params, blocks_params, epilog_params, **batch):
         super().__init__(n_feats, n_class, **batch)
 
         self.prolog = JasperSubmodule(in_channels=n_feats, **prolog_params)
@@ -71,14 +71,14 @@ class JasperModel(BaseModel):
             nn.Conv1d(out_channels=n_class, **epilog_params[2])
         )
 
+        self.alpha, self.beta = alpha, beta
+
     def forward(self, spectrogram, **batch):
         x = self.prolog(spectrogram)
         for block in self.blocks:
             x = block(x)
 
-        x = self.epilog(x)
-        x = nn.ConstantPad1d((0, spectrogram.shape[2] - x.shape[2]), 0.)(x)
-        return {"logits": x.transpose(1, 2)}
+        return {"logits": self.epilog(x).transpose(1, 2)}
 
     def transform_input_lengths(self, input_lengths):
-        return input_lengths  # we don't reduce time dimension here
+        return (input_lengths * self.alpha + self.beta).type(torch.int)

@@ -26,7 +26,9 @@
     "args": {
       "n_feats":  128,
       "blocks_num":  5,
-      "submodules_num": 3,
+      "submodules_num": 2,
+      "alpha": 0.5,
+      "beta": -265,
       "prolog_params": {
         "out_channels":  256,
         "kernel_size":  11,
@@ -143,10 +145,13 @@
     }
   ],
   "lr_scheduler": {
-    "type": "MultiStepLR",
+    "type": "OneCycleLR",
     "args": {
-      "milestones": [10, 20, 30, 40],
-      "gamma": 0.1
+      "steps_per_epoch": 100,
+      "epochs": 51,
+      "anneal_strategy": "cos",
+      "max_lr": 1e-2,
+      "pct_start": 0.2
     }
   },
   "trainer": {
