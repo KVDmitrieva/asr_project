@@ -69,13 +69,14 @@ class CTCCharTextEncoder(CharTextEncoder):
         assert voc_size == len(self.ind2char)
         hypos: List[Hypothesis] = [Hypothesis('', 1.0)]
 
+        probs = probs[:probs_length]
         for frame in probs:
-            hypos = self._extend_and_merge(frame, hypos, probs_length)
+            hypos = self._extend_and_merge(frame, hypos)
             hypos = self._truncate(hypos, beam_size)
 
         return sorted(hypos, key=lambda x: x.prob, reverse=True)
 
-    def _extend_and_merge(self, frame, hypos, probs_length):
+    def _extend_and_merge(self, frame, hypos):
         new_hypos = defaultdict(float)
         for next_char_index, next_char_proba in enumerate(frame):
             for pref, pref_proba in hypos:
@@ -84,8 +85,6 @@ class CTCCharTextEncoder(CharTextEncoder):
                 last_char = pref[-1] if pref else self.EMPTY_TOK
                 if next_char != self.EMPTY_TOK and next_char != last_char:
                     new_pref += next_char
-                if len(new_pref) <= probs_length:
-                    new_hypos[new_pref] += next_char_proba * pref_proba
 
         return [Hypothesis(text, probs) for text, probs in new_hypos.items()]
 
