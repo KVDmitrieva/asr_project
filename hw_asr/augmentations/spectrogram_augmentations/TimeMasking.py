@@ -15,5 +15,4 @@ class TimeMasking(AugmentationBase):
         self._aug = t.TimeMasking(*args, **kwargs)
 
     def __call__(self, data: Tensor):
-        x = data.unsqueeze(1)
-        return self._aug(x).squeeze(1)
+        return self._aug(data)
