@@ -123,15 +123,15 @@
   },
   "metrics": [
     {
-      "type": "ArgmaxWERMetric",
+      "type": "LMBeamSearchWERMetric",
       "args": {
-        "name": "WER (argmax)"
+        "name": "WER (lm beam search)"
       }
     },
     {
-      "type": "ArgmaxCERMetric",
+      "type": "LMBeamSearchCERMetric",
       "args": {
-        "name": "CER (argmax)"
+        "name": "CER (lm beam search)"
       }
     }
   ],
@@ -143,6 +143,14 @@
       "anneal_strategy": "cos",
       "max_lr": 1e-2,
       "pct_start": 0.2
+    }
+  },
+  "text_encoder": {
+    "type": "CTCCharTextEncoder",
+    "args": {
+        "lm_path": "lm/3-gram.arpa",
+        "alpha": 0.5,
+        "beta": 1.0
     }
   },
   "trainer": {
