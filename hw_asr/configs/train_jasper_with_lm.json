@@ -123,15 +123,15 @@
   },
   "metrics": [
     {
-      "type": "ArgmaxWERMetric",
+      "type": "LMBeamSearchWERMetric",
       "args": {
-        "name": "WER (argmax)"
+        "name": "WER (lm beam search)"
       }
     },
     {
-      "type": "ArgmaxCERMetric",
+      "type": "LMBeamSearchCERMetric",
       "args": {
-        "name": "CER (argmax)"
+        "name": "CER (lm beam search)"
       }
     }
   ],
@@ -145,16 +145,8 @@
       "pct_start": 0.2
     }
   },
-  "text_encoder": {
-    "type": "CTCCharTextEncoder",
-    "args": {
-        "lm_path": "lm/3-gram.arpa",
-        "alpha": 0.5,
-        "beta": 1.0
-    }
-  },
   "trainer": {
-    "epochs": 25,
+    "epochs": 50,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
