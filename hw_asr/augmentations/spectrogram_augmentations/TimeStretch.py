@@ -15,4 +15,4 @@ class TimeStretch(AugmentationBase):
         self._aug = t.TimeStretch(*args, **kwargs)
 
     def __call__(self, data: Tensor):
-        return self._aug(data.squeeze(0)).unsqueeze(1)
+        return self._aug(data.squeeze(0)).unsqueeze(0)
