@@ -19,4 +19,7 @@ class AddBackgroundNoise(AugmentationBase):
 
     def __call__(self, data: Tensor):
         n_repeat = (data.shape[1] + self.noise.shape[1] - 1) // self.noise.shape[1]
-        return add_noise(data, self.noise.repeat(1, n_repeat)[:, :data.shape[1]], self.snr_dbs)[0]
+        print("DEBUG BEFORE", data.shape)
+        x = add_noise(data, self.noise.repeat(1, n_repeat)[:, :data.shape[1]], self.snr_dbs)[0]
+        print("DEBUG AFTER", x.shape)
+        return x
