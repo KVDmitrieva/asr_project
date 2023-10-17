@@ -1,5 +1,5 @@
 {
-  "name": "train_100_jasper_smaller",
+  "name": "train_100_jasper_smaller_aug",
   "n_gpu": 1,
   "preprocessing": {
     "sr": 16000,
@@ -11,8 +11,22 @@
     "log_spec": true
   },
   "augmentations": {
-    "wave": [],
-    "spectrogram": []
+    "wave": [
+      {
+        "type": "AddBackgroundNoise",
+        "args": {
+          "snr_dbs": [100]
+        }
+      }
+    ],
+    "spectrogram": [
+      {
+        "type": "TimeMasking",
+        "args": {
+          "time_mask_param": 20
+        }
+      }
+    ]
   },
   "arch": {
     "type": "JasperModel",
