@@ -18,6 +18,6 @@ class AddBackgroundNoise(AugmentationBase):
         self.snr_dbs = snr_dbs
 
     def __call__(self, data: Tensor):
-        x = data.unsqueeze(1)
+        x = data.unsqueeze(0)
         x = add_noise(x, self.noise[:x.shape[0]], self.snr_dbs)
-        return x.squeeze(1)
+        return x.squeeze(0)
