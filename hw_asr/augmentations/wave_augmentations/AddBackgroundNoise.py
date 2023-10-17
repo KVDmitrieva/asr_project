@@ -1,6 +1,6 @@
 import torchaudio
 
-from torch import Tensor
+from torch import tensor, Tensor
 from torchaudio.functional import add_noise
 from torchaudio.utils import download_asset
 
@@ -15,8 +15,8 @@ class AddBackgroundNoise(AugmentationBase):
         """
         sample_noise = download_asset("tutorial-assets/Lab41-SRI-VOiCES-rm1-babb-mc01-stu-clo-8000hz.wav")
         self.noise, _ = torchaudio.load(sample_noise)
-        self.snr_dbs = snr_dbs
+        self.snr_dbs = tensor(snr_dbs)
 
     def __call__(self, data: Tensor):
         n_repeat = (data.shape[1] + self.noise.shape[1] - 1) // self.noise.shape[1]
-        return add_noise(data, self.noise.repeat(1, n_repeat)[:, :data.shape[0]], self.snr_dbs)
+        return add_noise(data, self.noise.repeat(1, n_repeat)[:, :data.shape[0]], self.snr_dbs)[0]
