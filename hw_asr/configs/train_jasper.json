@@ -1,5 +1,5 @@
 {
-  "name": "train_100_jasper",
+  "name": "train_100_jasper_smaller",
   "n_gpu": 1,
   "preprocessing": {
     "sr": 16000,
@@ -19,7 +19,7 @@
     "args": {
       "n_feats":  128,
       "blocks_num":  5,
-      "submodules_num": 3,
+      "submodules_num": 2,
       "alpha": 0.5,
       "beta": -35,
       "prolog_params": {
