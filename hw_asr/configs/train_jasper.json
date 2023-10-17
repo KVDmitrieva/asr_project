@@ -83,7 +83,7 @@
   },
   "data": {
     "train": {
-      "batch_size": 40,
+      "batch_size": 100,
       "num_workers": 0,
       "datasets": [
         {
@@ -97,7 +97,7 @@
       ]
     },
     "val": {
-      "batch_size": 40,
+      "batch_size": 100,
       "num_workers": 0,
       "datasets": [
         {
@@ -143,14 +143,6 @@
       "anneal_strategy": "cos",
       "max_lr": 1e-2,
       "pct_start": 0.2
-    }
-  },
-  "text_encoder": {
-    "type": "CTCCharTextEncoder",
-    "args": {
-        "lm_path": "lm/3-gram.arpa",
-        "alpha": 0.5,
-        "beta": 1.0
     }
   },
   "trainer": {
