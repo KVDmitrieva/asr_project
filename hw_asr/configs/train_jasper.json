@@ -19,7 +19,7 @@
     "args": {
       "n_feats":  128,
       "blocks_num":  5,
-      "submodules_num": 2,
+      "submodules_num": 3,
       "alpha": 0.5,
       "beta": -35,
       "prolog_params": {
@@ -83,7 +83,7 @@
   },
   "data": {
     "train": {
-      "batch_size": 10,
+      "batch_size": 40,
       "num_workers": 0,
       "datasets": [
         {
@@ -97,7 +97,7 @@
       ]
     },
     "val": {
-      "batch_size": 10,
+      "batch_size": 40,
       "num_workers": 0,
       "datasets": [
         {
