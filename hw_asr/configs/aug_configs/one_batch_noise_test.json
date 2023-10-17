@@ -14,7 +14,7 @@
     "wave": [{
         "type": "AddBackgroundNoise",
         "args": {
-          "snr_dbs": [10]
+          "snr_dbs": [100]
         }
       }],
     "spectrogram": []
