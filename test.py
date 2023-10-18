@@ -63,15 +63,19 @@ def main(config, out_file):
                 argmax = batch["argmax"][i]
                 argmax = argmax[: int(batch["log_probs_length"][i])]
                 pred_text_argmax = text_encoder.ctc_decode(argmax.cpu().numpy())
+                pred_texts_beam = text_encoder.ctc_beam_search(
+                            batch["probs"][i], batch["log_probs_length"][i], beam_size=100
+                        )
+                pred_texts_beam = [pred.text for pred in pred_texts_beam]
                 results.append(
                     {
                         "ground_trurh": batch["text"][i],
                         "pred_text_argmax": pred_text_argmax,
                         "CER (argmax)": calc_cer(batch["text"][i], pred_text_argmax),
                         "WER (argmax)": calc_wer(batch["text"][i], pred_text_argmax),
-                        "pred_text_beam_search": text_encoder.ctc_beam_search(
-                            batch["probs"][i], batch["log_probs_length"][i], beam_size=100
-                        )[:10],
+                        "pred_text_beam_search": pred_texts_beam[:10],
+                        "CER (beam)": calc_cer(batch["text"][i], pred_text_argmax[0]),
+                        "WER (beam)": calc_wer(batch["text"][i], pred_text_argmax[0]),
                     }
                 )
     with Path(out_file).open("w") as f:
