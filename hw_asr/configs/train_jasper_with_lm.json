@@ -95,7 +95,7 @@
       ]
     }
   },
-  "data": {
+ "data": {
     "train": {
       "batch_size": 100,
       "num_workers": 0,
@@ -103,7 +103,8 @@
         {
           "type": "LibrispeechDataset",
           "args": {
-            "part": "train-clean-100",
+            "part": "train_all",
+            "data_dir": "/kaggle/input/librispeech",
             "max_audio_length": 20.0,
             "max_text_length": 200
           }
@@ -118,6 +119,7 @@
           "type": "LibrispeechDataset",
           "args": {
             "part": "test-clean",
+            "data_dir": "/kaggle/input/librispeech",
             "max_audio_length": 20.0,
             "max_text_length": 200
           }
