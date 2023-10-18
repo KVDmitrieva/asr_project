@@ -191,3 +191,28 @@ class BaseTrainer:
         self.logger.info(
             "Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch)
         )
+
+    def _from_pretrained(self, pretrained_path):
+        """
+        Fine-tune pre-trained model from saved checkpoints
+
+        :param pretrained_path: Checkpoint path to pre-trained
+        """
+        resume_path = str(pretrained_path)
+        self.logger.info("Loading checkpoint: {} ...".format(resume_path))
+        checkpoint = torch.load(resume_path, self.device)
+        self.start_epoch = 0
+        self.mnt_best = checkpoint["monitor_best"]
+
+        # load architecture params from checkpoint.
+        if checkpoint["config"]["arch"] != self.config["arch"]:
+            self.logger.warning(
+                "Warning: Architecture configuration given in config file is different from that "
+                "of checkpoint. This may yield an exception while state_dict is being loaded."
+            )
+        self.model.load_state_dict(checkpoint["state_dict"])
+
+
+        self.logger.info(
+            "Pre-trained model loaded. Start training."
+        )

@@ -130,7 +130,7 @@
   "optimizer": {
     "type": "Adam",
     "args": {
-      "lr": 3e-4
+      "lr": 3e-3
     }
   },
   "loss": {
@@ -157,7 +157,7 @@
       "steps_per_epoch": 100,
       "epochs": 51,
       "anneal_strategy": "cos",
-      "max_lr": 3e-4,
+      "max_lr": 3e-3,
       "pct_start": 0.2
     }
   },
@@ -170,7 +170,7 @@
     }
   },
   "trainer": {
-    "epochs": 50,
+    "epochs": 5,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
