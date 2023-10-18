@@ -25,35 +25,34 @@ URL_LINKS = {
 
 
 class LibrispeechDataset(BaseDataset):
-    def __init__(self, part, data_dir=None, *args, **kwargs):
+    def __init__(self, part, index_dir=None, data_dir=None, *args, **kwargs):
         assert part in URL_LINKS or part == 'train_all'
 
-        if data_dir is None:
-            data_dir = ROOT_PATH / "data" / "datasets" / "librispeech"
-            data_dir.mkdir(exist_ok=True, parents=True)
-        if data_dir is str:
-            data_dir = Path(data_dir)
-        self._data_dir = data_dir
+        if index_dir is None:
+            index_dir = ROOT_PATH / "data" / "datasets" / "librispeech"
+            index_dir.mkdir(exist_ok=True, parents=True)
+        self._index_dir = index_dir
         if part == 'train_all':
             index = sum([self._get_or_load_index(part)
                          for part in URL_LINKS if 'train' in part], [])
         else:
             index = self._get_or_load_index(part)
 
+        self._data_dir = data_dir
         super().__init__(index, *args, **kwargs)
 
     def _load_part(self, part):
-        arch_path = self._data_dir / f"{part}.tar.gz"
+        arch_path = self._index_dir / f"{part}.tar.gz"
         print(f"Loading part {part}")
         download_file(URL_LINKS[part], arch_path)
-        shutil.unpack_archive(arch_path, self._data_dir)
-        for fpath in (self._data_dir / "LibriSpeech").iterdir():
-            shutil.move(str(fpath), str(self._data_dir / fpath.name))
+        shutil.unpack_archive(arch_path, self._index_dir)
+        for fpath in (self._index_dir / "LibriSpeech").iterdir():
+            shutil.move(str(fpath), str(self._index_dir / fpath.name))
         os.remove(str(arch_path))
-        shutil.rmtree(str(self._data_dir / "LibriSpeech"))
+        shutil.rmtree(str(self._index_dir / "LibriSpeech"))
 
     def _get_or_load_index(self, part):
-        index_path = self._data_dir / f"{part}_index.json"
+        index_path = self._index_dir / f"{part}_index.json"
         if index_path.exists():
             with index_path.open() as f:
                 index = json.load(f)
@@ -65,7 +64,9 @@ class LibrispeechDataset(BaseDataset):
 
     def _create_index(self, part):
         index = []
-        split_dir = self._data_dir / part
+        split_dir = self._index_dir if self._data_dir is None else Path(self._data_dir)
+        split_dir = split_dir / part
+
         if not split_dir.exists():
             self._load_part(part)
 
