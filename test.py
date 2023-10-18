@@ -71,11 +71,11 @@ def main(config, out_file):
                     {
                         "ground_trurh": batch["text"][i],
                         "pred_text_argmax": pred_text_argmax,
-                        "CER (argmax)": calc_cer(batch["text"][i], pred_text_argmax) * 100,
-                        "WER (argmax)": calc_wer(batch["text"][i], pred_text_argmax) * 100,
+                        "CER (argmax)": calc_cer(batch["text"][i].lower(), pred_text_argmax) * 100,
+                        "WER (argmax)": calc_wer(batch["text"][i].lower(), pred_text_argmax) * 100,
                         "pred_text_beam_search": pred_texts_beam[:10],
-                        "CER (beam)": calc_cer(batch["text"][i], pred_text_argmax[0]) * 100,
-                        "WER (beam)": calc_wer(batch["text"][i], pred_text_argmax[0]) * 100,
+                        "CER (beam)": calc_cer(batch["text"][i].lower(), pred_text_argmax[0]) * 100,
+                        "WER (beam)": calc_wer(batch["text"][i].lower(), pred_text_argmax[0]) * 100,
                     }
                 )
     with Path(out_file).open("w") as f:
