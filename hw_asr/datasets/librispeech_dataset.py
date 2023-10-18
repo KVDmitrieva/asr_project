@@ -27,7 +27,7 @@ URL_LINKS = {
 class LibrispeechDataset(BaseDataset):
     def __init__(self, part, index_dir=None, data_dir=None, *args, **kwargs):
         assert part in URL_LINKS or part == 'train_all'
-
+        self._data_dir = data_dir
         if index_dir is None:
             index_dir = ROOT_PATH / "data" / "datasets" / "librispeech"
             index_dir.mkdir(exist_ok=True, parents=True)
@@ -37,8 +37,6 @@ class LibrispeechDataset(BaseDataset):
                          for part in URL_LINKS if 'train' in part], [])
         else:
             index = self._get_or_load_index(part)
-
-        self._data_dir = data_dir
         super().__init__(index, *args, **kwargs)
 
     def _load_part(self, part):
