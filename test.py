@@ -64,7 +64,7 @@ def main(config, out_file):
                 argmax = argmax[: int(batch["log_probs_length"][i])]
                 pred_text_argmax = text_encoder.ctc_decode(argmax.cpu().numpy())
                 pred_texts_beam = text_encoder.ctc_beam_search(
-                            batch["probs"][i], batch["log_probs_length"][i], beam_size=100
+                            batch["probs"][i].cpu().numpy(), batch["log_probs_length"][i].cpu().numpy(), beam_size=100
                         )
                 pred_texts_beam = [pred.text for pred in pred_texts_beam]
                 results.append(
