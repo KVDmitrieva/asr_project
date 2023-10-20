@@ -97,12 +97,12 @@ def main(config, out_file):
                 )
     results.append(
         {
-            "CER (argmax)\t": sum(argmax_cer) / len(argmax_cer),
-            "WER (argmax)\t": sum(argmax_wer) / len(argmax_wer),
-            "CER (beam)\t": sum(beam_cer) / len(beam_cer),
-            "WER (beam)\t": sum(beam_wer) / len(beam_wer),
-            "CER (lm beam)\t": sum(lm_beam_cer) / len(lm_beam_cer),
-            "WER (lm beam)\t": sum(lm_beam_wer) / len(lm_beam_wer)
+            "CER (argmax)": sum(argmax_cer) / len(argmax_cer),
+            "WER (argmax)": sum(argmax_wer) / len(argmax_wer),
+            "CER (beam)": sum(beam_cer) / len(beam_cer),
+            "WER (beam)": sum(beam_wer) / len(beam_wer),
+            "CER (lm beam)": sum(lm_beam_cer) / len(lm_beam_cer),
+            "WER (lm beam)": sum(lm_beam_wer) / len(lm_beam_wer)
         }
     )
     with Path(out_file).open("w") as f:
