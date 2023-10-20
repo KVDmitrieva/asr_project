@@ -44,7 +44,9 @@ def main(config, out_file):
     model.eval()
 
     results = []
-
+    argmax_cer, argmax_wer = [], []
+    beam_cer, beam_wer = [], []
+    lm_beam_cer, lm_beam_wer = [], []
     with torch.no_grad():
         for batch_num, batch in enumerate(tqdm(dataloaders["test"])):
             batch = Trainer.move_batch_to_device(batch, device)
@@ -59,9 +61,7 @@ def main(config, out_file):
             )
             batch["probs"] = batch["log_probs"].exp().cpu()
             batch["argmax"] = batch["probs"].argmax(-1)
-            argmax_cer, argmax_wer = [], []
-            beam_cer, beam_wer = [], []
-            lm_beam_cer, lm_beam_wer = [], []
+
             for i in range(len(batch["text"])):
                 argmax = batch["argmax"][i]
                 argmax = argmax[: int(batch["log_probs_length"][i])]
@@ -103,16 +103,16 @@ def main(config, out_file):
                         "pred_text_lm_beam_search": pred_texts_lm_beam[:10],
                     }
                 )
-            results.append(
-                {
-                    "CER (argmax)\t": sum(argmax_cer) / len(argmax_cer),
-                    "WER (argmax)\t": sum(argmax_wer) / len(argmax_wer),
-                    "CER (beam)\t": sum(beam_cer) / len(beam_cer),
-                    "WER (beam)\t": sum(beam_wer) / len(beam_wer),
-                    "CER (lm beam)\t": sum(lm_beam_cer) / len(lm_beam_cer),
-                    "WER (lm beam)\t": sum(lm_beam_wer) / len(lm_beam_wer)
-                }
-            )
+    results.append(
+        {
+            "CER (argmax)\t": sum(argmax_cer) / len(argmax_cer),
+            "WER (argmax)\t": sum(argmax_wer) / len(argmax_wer),
+            "CER (beam)\t": sum(beam_cer) / len(beam_cer),
+            "WER (beam)\t": sum(beam_wer) / len(beam_wer),
+            "CER (lm beam)\t": sum(lm_beam_cer) / len(lm_beam_cer),
+            "WER (lm beam)\t": sum(lm_beam_wer) / len(lm_beam_wer)
+        }
+    )
     with Path(out_file).open("w") as f:
         json.dump(results, f, indent=2)
 
