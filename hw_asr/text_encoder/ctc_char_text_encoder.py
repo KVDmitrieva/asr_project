@@ -47,7 +47,6 @@ class CTCCharTextEncoder(CharTextEncoder):
         """
         Performs beam search and returns a list of pairs (hypothesis, hypothesis probability).
         """
-        print("DEBUG: HELLO LM BEAM")
         assert len(log_probs.shape) == 2
         char_length, voc_size = log_probs.shape
         assert voc_size == len(self.ind2char)
@@ -57,7 +56,6 @@ class CTCCharTextEncoder(CharTextEncoder):
         beam_pred = self.decoder.decode_beams(probs, beam_width=beam_size)
         for text, _, _, _, lm_log_prob in beam_pred:
             hypos.append(Hypothesis(text.lower(), np.exp(lm_log_prob)))
-        print("DEBUG: BYE LM BEAM", len(hypos))
         return sorted(hypos, key=lambda x: x.prob, reverse=True)
 
     def ctc_beam_search(self, probs: torch.tensor, probs_length,
@@ -65,17 +63,15 @@ class CTCCharTextEncoder(CharTextEncoder):
         """
         Performs beam search and returns a list of pairs (hypothesis, hypothesis probability).
         """
-        print("DEBUG: HELLO BEAM")
         assert len(probs.shape) == 2
         char_length, voc_size = probs.shape
         assert voc_size == len(self.ind2char)
         hypos: List[Hypothesis] = [Hypothesis('', 1.0)]
-        print(probs_length)
+
         probs = probs[:probs_length]
         for frame in probs:
             hypos = self._extend_and_merge(frame, hypos)
             hypos = self._truncate(hypos, beam_size)
-        print("DEBUG: BYE BEAM", len(hypos))
         return sorted(hypos, key=lambda x: x.prob, reverse=True)
 
     def _extend_and_merge(self, frame, hypos):
@@ -87,6 +83,7 @@ class CTCCharTextEncoder(CharTextEncoder):
                 last_char = pref[-1] if pref else self.EMPTY_TOK
                 if next_char != self.EMPTY_TOK and next_char != last_char:
                     new_pref += next_char
+                new_hypos[new_pref] += next_char_proba * pref_proba
 
         return [Hypothesis(text, probs) for text, probs in new_hypos.items()]
 
