@@ -70,7 +70,7 @@ class CTCCharTextEncoder(CharTextEncoder):
         char_length, voc_size = probs.shape
         assert voc_size == len(self.ind2char)
         hypos: List[Hypothesis] = [Hypothesis('', 1.0)]
-
+        print(probs_length)
         probs = probs[:probs_length]
         for frame in probs:
             hypos = self._extend_and_merge(frame, hypos)
