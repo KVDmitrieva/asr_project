@@ -75,8 +75,12 @@ def main(config, out_file):
                             beam_size=100
                         )
                 pred_texts_beam = [pred.text for pred in pred_texts_beam]
-                beam_cer.append(calc_cer(batch["text"][i].lower(), pred_texts_beam[0]) * 100)
-                beam_wer.append(calc_wer(batch["text"][i].lower(), pred_texts_beam[0]) * 100)
+                if len(pred_texts_beam):
+                    beam_cer.append(calc_cer(batch["text"][i].lower(), pred_texts_beam[0]) * 100)
+                    beam_wer.append(calc_wer(batch["text"][i].lower(), pred_texts_beam[0]) * 100)
+                else:
+                    beam_cer.append(0.0)
+                    beam_wer.append(0.0)
 
                 pred_texts_lm_beam = text_encoder.ctc_lm_beam_search(
                             batch["log_probs"][i].cpu().numpy(),
@@ -84,8 +88,13 @@ def main(config, out_file):
                             beam_size=100
                         )
                 pred_texts_lm_beam = [pred.text for pred in pred_texts_lm_beam]
-                lm_beam_cer.append(calc_cer(batch["text"][i].lower(), pred_texts_lm_beam[0]) * 100)
-                lm_beam_wer.append(calc_wer(batch["text"][i].lower(), pred_texts_lm_beam[0]) * 100)
+                if len(pred_texts_lm_beam):
+                    lm_beam_cer.append(calc_cer(batch["text"][i].lower(), pred_texts_lm_beam[0]) * 100)
+                    lm_beam_wer.append(calc_wer(batch["text"][i].lower(), pred_texts_lm_beam[0]) * 100)
+                else:
+                    lm_beam_cer.append(0.0)
+                    lm_beam_wer.append(0.0)
+
                 results.append(
                     {
                         "ground_trurh": batch["text"][i],
