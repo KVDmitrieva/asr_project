@@ -60,29 +60,48 @@ def main(config, out_file):
             batch["probs"] = batch["log_probs"].exp().cpu()
             batch["argmax"] = batch["probs"].argmax(-1)
             argmax_cer, argmax_wer = [], []
+            beam_cer, beam_wer = [], []
+            lm_beam_cer, lm_beam_wer = [], []
             for i in range(len(batch["text"])):
                 argmax = batch["argmax"][i]
                 argmax = argmax[: int(batch["log_probs_length"][i])]
                 pred_text_argmax = text_encoder.ctc_decode(argmax.cpu().numpy())
-                pred_texts_beam = text_encoder.ctc_beam_search(
-                            batch["probs"][i].cpu().numpy(), batch["log_probs_length"][i].cpu().numpy(), beam_size=100
-                        )
-                pred_texts_beam = [pred.text for pred in pred_texts_beam]
                 argmax_cer.append(calc_cer(batch["text"][i].lower(), pred_text_argmax) * 100)
                 argmax_wer.append(calc_wer(batch["text"][i].lower(), pred_text_argmax) * 100)
+
+                pred_texts_beam = text_encoder.ctc_beam_search(
+                            batch["probs"][i].cpu().numpy(),
+                            batch["log_probs_length"][i].cpu().numpy(),
+                            beam_size=100
+                        )
+                pred_texts_beam = [pred.text for pred in pred_texts_beam]
+                beam_cer.append(calc_cer(batch["text"][i].lower(), pred_texts_beam[0]) * 100)
+                beam_wer.append(calc_wer(batch["text"][i].lower(), pred_texts_beam[0]) * 100)
+
+                pred_texts_lm_beam = text_encoder.ctc_lm_beam_search(
+                            batch["log_probs"][i].cpu().numpy(),
+                            batch["log_probs_length"][i].cpu().numpy(),
+                            beam_size=100
+                        )
+                pred_texts_lm_beam = [pred.text for pred in pred_texts_lm_beam]
+                lm_beam_cer.append(calc_cer(batch["text"][i].lower(), pred_texts_lm_beam[0]) * 100)
+                lm_beam_wer.append(calc_wer(batch["text"][i].lower(), pred_texts_lm_beam[0]) * 100)
                 results.append(
                     {
                         "ground_trurh": batch["text"][i],
                         "pred_text_argmax": pred_text_argmax,
                         "pred_text_beam_search": pred_texts_beam[:10],
-                        "CER (beam)": calc_cer(batch["text"][i].lower(), pred_text_argmax[0]) * 100,
-                        "WER (beam)": calc_wer(batch["text"][i].lower(), pred_text_argmax[0]) * 100,
+                        "pred_text_lm_beam_search": pred_texts_lm_beam[:10],
                     }
                 )
             results.append(
                 {
-                    "CER (argmax)": sum(argmax_cer) / len(argmax_cer),
-                    "WER (argmax)": sum(argmax_wer) / len(argmax_wer)
+                    "CER (argmax)\t": sum(argmax_cer) / len(argmax_cer),
+                    "WER (argmax)\t": sum(argmax_wer) / len(argmax_wer),
+                    "CER (beam)\t": sum(beam_cer) / len(beam_cer),
+                    "WER (beam)\t": sum(beam_wer) / len(beam_wer),
+                    "CER (lm beam)\t": sum(lm_beam_cer) / len(lm_beam_cer),
+                    "WER (lm beam)\t": sum(lm_beam_wer) / len(lm_beam_wer)
                 }
             )
     with Path(out_file).open("w") as f:
