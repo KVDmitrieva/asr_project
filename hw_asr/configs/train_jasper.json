@@ -23,7 +23,7 @@
       {
         "type": "TimeMasking",
         "args": {
-          "time_mask_param": 40
+          "time_mask_param": 20
         }
       }
     ]
