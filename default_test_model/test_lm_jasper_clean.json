@@ -148,8 +148,8 @@
     "type": "CTCCharTextEncoder",
     "args": {
         "lm_path": "lm/3-gram.arpa",
-        "alpha": 0.7,
-        "beta": 0.1
+        "alpha": 1,
+        "beta": 1
     }
   },
   "trainer": {
