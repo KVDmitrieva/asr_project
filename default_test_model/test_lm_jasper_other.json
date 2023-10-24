@@ -148,7 +148,7 @@
     "type": "CTCCharTextEncoder",
     "args": {
         "lm_path": "lm/3-gram.arpa",
-        "alpha": 0.5,
+        "alpha": 0.7,
         "beta": 0.1
     }
   },
