@@ -23,7 +23,7 @@
       {
         "type": "TimeMasking",
         "args": {
-          "time_mask_param": 20
+          "time_mask_param": 40
         }
       }
     ]
@@ -33,7 +33,7 @@
     "args": {
       "n_feats":  128,
       "blocks_num":  5,
-      "submodules_num": 3,
+      "submodules_num": 2,
       "alpha": 0.5,
       "beta": -35,
       "prolog_params": {
@@ -155,14 +155,14 @@
     "type": "OneCycleLR",
     "args": {
       "steps_per_epoch": 100,
-      "epochs": 51,
+      "epochs": 71,
       "anneal_strategy": "cos",
       "max_lr": 3e-3,
-      "pct_start": 0.2
+      "pct_start": 0.3
     }
   },
   "trainer": {
-    "epochs": 50,
+    "epochs": 70,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
