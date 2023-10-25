@@ -24,7 +24,7 @@ First of all, download model checkpoint and its config:
 ```shell
 cd default_test_model
 wget "https://www.dropbox.com/scl/fi/10oj65gl4w66ij9b4yu5o/config.json?rlkey=teanfhvo8ppcwqxudj8cgn8m6&dl=0" -O config.json
-wget "https://www.dropbox.com/scl/fi/anqiqvfjl2bz8yen9unoc/model_best.pth?rlkey=llr7iwo2da20rt6ort0590qzv&dl=0" -O checkpoint.pth
+wget "https://www.dropbox.com/scl/fi/coj8d16hcf4og27nhxe9d/model_best-2.pth?rlkey=l88vetlrhlfomuhwjdk1idmn0&dl=0" -O checkpoint.pth
 cd ..
 ```
 Run test-other
