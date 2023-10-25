@@ -105,7 +105,9 @@ def main(config, out_file):
             "WER (lm beam)": sum(lm_beam_wer) / len(lm_beam_wer)
         }
     )
-    print(results[-1])
+    for key, val in results[-1].items():
+        print(key, val)
+
     with Path(out_file).open("w") as f:
         json.dump(results, f, indent=2)
 
