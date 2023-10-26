@@ -70,7 +70,7 @@
       ],
       "epilog_params": [
         {
-          "in_channels":  768,
+          "in_channels":  640,
           "out_channels":  896,
           "kernel_size":  15,
           "dilation": 2,
