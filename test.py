@@ -81,7 +81,7 @@ def main(config, out_file):
                 pred_texts_lm_beam = text_encoder.ctc_lm_beam_search(
                             batch["log_probs"][i].cpu().numpy(),
                             batch["log_probs_length"][i].cpu().numpy(),
-                            beam_size=100
+                            beam_size=300
                         )
                 pred_texts_lm_beam = [pred.text for pred in pred_texts_lm_beam]
                 lm_beam_cer.append(calc_cer(batch["text"][i].lower(), pred_texts_lm_beam[0]) * 100)
