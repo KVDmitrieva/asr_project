@@ -27,13 +27,13 @@ wget "https://www.dropbox.com/scl/fi/10oj65gl4w66ij9b4yu5o/config.json?rlkey=tea
 wget "https://www.dropbox.com/scl/fi/coj8d16hcf4og27nhxe9d/model_best-2.pth?rlkey=l88vetlrhlfomuhwjdk1idmn0&dl=0" -O checkpoint.pth
 cd ..
 ```
-Run test-other
+Run test-clean
 ```shell
 python3 test.py \
-   -c default_test_model/test_lm_jasper_other.json \
+   -c default_test_model/test_lm_jasper_clean.json \
    -r default_test_model/checkpoint.pth \
-   -o test_result_other.json
+   -o test_result_clean.json
 ```
-After running test, test_result_other.json file should be created. All metrics would be written at the end of the file.
+After running test, test_result_clean.json file should be created. All metrics would be written at the end of the file.
 
-Also, you can run test on test-clean using `test_lm_jasper_clean.json` or on your own data with option `-t`.
+Also, you can run test on test-other using `test_lm_jasper_other.json` or on your own data with option `-t`.
