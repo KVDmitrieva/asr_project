@@ -1,4 +1,10 @@
-# ASR project barebones
+# ASR project
+
+Implementation of [Jasper: An End-to-End Convolutional Neural Acoustic Model](https://arxiv.org/pdf/1904.03288.pdf) for
+automatic speech recognition
+<p align="center">
+  <img src="./jasper.png" height="300" />
+</p>
 
 ## Installation guide
 
